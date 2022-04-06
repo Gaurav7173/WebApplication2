@@ -48,6 +48,40 @@ namespace WebApplication2.Controllers
 
             return RedirectToAction("ContactUs");
         }
+        public ActionResult Edit(int? id, string name, string role,string address,string mobile)
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View(new Employee() { EmpId = id ?? 0, EmpRole = role, EmpName = name,EmpAddress=address,EmpMobile=mobile });
+        }
+
+        public ActionResult Delete(int? id, string name, string role,string address,string mobile)
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View(new Employee() { EmpId = id ?? 0, EmpRole = role, EmpName = name,EmpAddress=address,EmpMobile=mobile });
+        }
+
+        public ActionResult Details(int? id)
+        {
+            ViewBag.Message = "Your contact page.";
+
+            var result = Employee.GetEmpDataByEmpId(id ?? 0);
+
+
+            Employee newP = new Employee()
+            {
+                EmpId = Convert.ToInt32(result.Tables[0].Rows[0][0].ToString()),
+                EmpName = result.Tables[0].Rows[0]["EmpName"].ToString(),
+                EmpRole = result.Tables[0].Rows[0]["EmpRole"].ToString(),
+                EmpAddress = result.Tables[0].Rows[0]["EmpAddress"].ToString(),
+                EmpMobile = result.Tables[0].Rows[0]["EmpMobile"].ToString(),
+               
+
+            };
+            return View(newP);
+        }
+
 
         public ActionResult ContactUs()
         {
@@ -75,13 +109,43 @@ namespace WebApplication2.Controllers
                 {
                     EmpId = Convert.ToInt32(dataa[0].ToString()),
                     EmpName = dataa[1].ToString(),
-                    EmpRole = dataa[2].ToString()
+                    EmpRole = dataa[2].ToString(),
+                    EmpAddress = dataa[3].ToString(),
+                    EmpMobile = dataa[4].ToString()
+
                 });
             }
 
             return View(e);
         }
-     
+
+
+        [HttpPost]
+        public ActionResult Edit(Employee e)
+        {
+            if (ModelState.IsValid)
+            {
+
+                Employee newP = e;
+                e.UpdateEmployee(e);
+            }
+
+            return RedirectToAction("ContactUs");
+        }
+        [HttpPost]
+        public ActionResult Delete(Employee e)
+        {
+            if (ModelState.IsValid)
+            {
+
+                Employee.DeleteEmployee(e.EmpId);
+            }
+
+            return RedirectToAction("ContactUs");
+        }
+
+
+
 
     }
 }
